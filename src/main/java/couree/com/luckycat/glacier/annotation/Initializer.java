@@ -1,11 +1,15 @@
-package couree.com.luckycat.core.annotation;
+package couree.com.luckycat.glacier.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target({ElementType.TYPE})
+/**
+ * Initializer.
+ * @author James Chan
+ */
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface InitializerContainer {
+public @interface Initializer {
 }

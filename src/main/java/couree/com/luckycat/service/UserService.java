@@ -25,7 +25,7 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-    @Value("${User.Verification.SignUpByPhoneCodeLength}")
+    @Value("${User.Verification.SignUpByPhoneCodeBufferTime}")
     private int signUpByPhoneCodeLength;
 
     @Value("${User.Verification.SignUpByPhoneCodeBufferTime}")
@@ -88,18 +88,19 @@ public class UserService {
     public void sendCodeToPhone(String phoneNumberString, RedisKeyType redisKeyType) {
         // check if the verification code has been sent within a buffer time
         // throw exception if the key is found
-        final Redis.Key createdKey = Redis.key(RedisKeyType.SIGN_UP_BY_PHONE_CREATED_KEY, phoneNumberString);
+        final Redis.Key createdKey = Redis.key(redisKeyType, phoneNumberString);
         final Boolean createdKeyExists = redisTemplate.hasKey(createdKey.toString());
         Throws.ifTrue(createdKeyExists, UserServiceException.SEND_VERIFICATION_CODE_FREQUENTLY);
 
         // generate a verification code and send it to the user's phone
         final PhoneNumber phoneNumber = PhoneNumber.of(phoneNumberString);
         final String verificationCode = Verifications.generateCode(signUpByPhoneCodeLength);
-        final boolean isSuccessfullySendCode = phoneService.sendVerificationCode(phoneNumber, verificationCode, signUpByPhoneCodeExpiration);
+        final boolean isSuccessfullySendCode
+                = phoneService.sendVerificationCode(phoneNumber, verificationCode, signUpByPhoneCodeExpiration);
         Throws.ifFalse(isSuccessfullySendCode, UserServiceException.FAIL_TO_SEND_VERIFICATION_CODE);
 
         // set created-key and store the verification code
-        final Redis.Key verificationCodeKey = Redis.key(RedisKeyType.SIGN_UP_BY_PHONE_VERIFICATION_CODE, phoneNumberString);
+        final Redis.Key verificationCodeKey = Redis.key(redisKeyType, phoneNumberString);
         redisTemplate.opsForValue()
                 .set(verificationCodeKey.toString(), verificationCode, Duration.ofSeconds(signUpByPhoneCodeExpiration));
         redisTemplate.opsForValue()
@@ -111,7 +112,10 @@ public class UserService {
      * @return user dto
      */
     public UserDto getUserDto(Long userId) {
-        return JBeans.convert(getUser(userId), UserDto.class);
+        final User user = getUser(userId);
+        Throws.ifNull(user, UserServiceException.USER_NOT_FOUND);
+
+        return JBeans.convert(user, UserDto.class);
     }
 
     /**
@@ -119,7 +123,6 @@ public class UserService {
      * @param phoneNumberString phone number string
      */
     public void signUpSendCodeToPhone(String phoneNumberString) {
-
     }
 
     /**

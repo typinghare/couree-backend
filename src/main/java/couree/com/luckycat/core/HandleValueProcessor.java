@@ -3,6 +3,7 @@ package couree.com.luckycat.core;
 import couree.com.luckycat.core.annotation.PackedBy;
 import couree.com.luckycat.core.pack.Packer;
 import couree.com.luckycat.core.pack.PackerFactory;
+import org.aspectj.apache.bcel.classfile.ClassFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -16,13 +17,12 @@ import java.io.PrintWriter;
  */
 @Component
 public class HandleValueProcessor {
-    private final Config config;
+    private Class<? extends Packer> defaultPackerClass;
 
     private final PackerFactory packerFactory;
 
     @Autowired
-    private HandleValueProcessor(Config config, PackerFactory packerFactory) {
-        this.config = config;
+    private HandleValueProcessor(PackerFactory packerFactory) {
         this.packerFactory = packerFactory;
     }
 
@@ -51,15 +51,17 @@ public class HandleValueProcessor {
      * Returns the default packer. Default packer is recorded in registry.
      * @return default packer
      */
+    @SuppressWarnings("unchecked")
     private Class<? extends Packer> getDefaultPacker() {
-        final String defaultPackerClassName = config.getRegistryValue("Packer.DefaultClass");
-
-        try {
-            @SuppressWarnings("unchecked") final Class<? extends Packer> defaultPackerClass =
-                    (Class<? extends Packer>) Class.forName(defaultPackerClassName);
-            return defaultPackerClass;
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        if (defaultPackerClass == null) {
+            final String className = Config.instance().getRegistryValue("Packer.DefaultClass");
+            try {
+                return (Class<? extends Packer>) Class.forName(className);
+            } catch (Exception e) {
+                throw new ClassFormatException(className);
+            }
         }
+
+        return defaultPackerClass;
     }
 }

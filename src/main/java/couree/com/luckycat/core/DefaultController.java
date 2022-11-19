@@ -1,13 +1,13 @@
 package couree.com.luckycat.core;
 
+import couree.com.luckycat.core.annotation.Controller;
 import couree.com.luckycat.core.exception.RequestException;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author James Chan
  */
-@RestController
+@Controller
 @RequestMapping()
 public class DefaultController {
     /**

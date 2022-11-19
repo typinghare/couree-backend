@@ -6,9 +6,8 @@ import couree.com.luckycat.core.Config;
 import couree.com.luckycat.core.annotation.Entry;
 import couree.com.luckycat.core.annotation.Initializer;
 import couree.com.luckycat.core.annotation.RequestExceptionCode;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +20,7 @@ public class RequestExceptionManager {
     /**
      * The fixed length of request error code.
      */
+    @Value("${RequestException.RequestExceptionCode}")
     private int REQUEST_EXCEPTION_CODE_LENGTH;
 
     /**
@@ -29,28 +29,26 @@ public class RequestExceptionManager {
     private final Map<Class<? extends RequestException>, RequestExceptionClass> requestExceptionClassMap = new HashMap<>();
 
     @Initializer
+    @SuppressWarnings("unchecked")
     private void init() {
-        final Config config = Config.instance();
-        REQUEST_EXCEPTION_CODE_LENGTH = Integer.parseInt(config.getRegistryValue("REQUEST_EXCEPTION_CODE_LENGTH"));
-
         final ApplicationContext applicationContext = Config.getApplicationContext();
         final Map<String, Object> requestExceptionMap = applicationContext.getBeansWithAnnotation(RequestExceptionCode.class);
-        for (Object requestException : requestExceptionMap.values()) {
+        for (final Object requestException : requestExceptionMap.values()) {
             if (!(requestException instanceof RequestException)) {
                 throw new RuntimeException(String.format(
-                        "A request exception class should extends request exception. Check [%s].",
+                        "Request exception classes should extend RequestException. Check [%s].",
                         requestException.getClass()
                 ));
             }
 
-            @SuppressWarnings("unchecked") final Class<? extends RequestException> _requestExceptionClass
+            final Class<? extends RequestException> _requestExceptionClass
                     = (Class<? extends RequestException>) requestException.getClass();
             final RequestExceptionCode requestExceptionCode = _requestExceptionClass.getAnnotation(RequestExceptionCode.class);
             final RequestExceptionClass requestExceptionClass = new RequestExceptionClass(requestExceptionCode.value());
             requestExceptionClassMap.put(_requestExceptionClass, requestExceptionClass);
 
-            Field[] fields = _requestExceptionClass.getDeclaredFields();
-            for (Field field : fields) {
+            final Field[] fields = _requestExceptionClass.getDeclaredFields();
+            for (final Field field : fields) {
                 final Entry entry = field.getAnnotation(Entry.class);
                 if (entry == null) continue;
 

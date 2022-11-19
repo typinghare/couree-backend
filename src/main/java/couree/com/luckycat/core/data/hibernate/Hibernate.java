@@ -22,6 +22,9 @@ public class Hibernate {
      */
     private static final Logger logger = LogManager.getLogger(Hibernate.class);
 
+    /**
+     * Hibernate configuration.
+     */
     private Configuration configuration;
 
     /**
@@ -56,8 +59,8 @@ public class Hibernate {
         configuration = new Configuration().setProperties(hibernateConfig);
 
         // register models
-        final Map<String, Model> modelMap =
-                Config.getApplicationContext().getBeansOfType(Model.class);
+        final Map<String, Model> modelMap = Config.getApplicationContext().getBeansOfType(Model.class);
+        System.out.println("modelmap entryset size:" + modelMap.entrySet().size());
         modelMap.forEach((name, modelInstance) -> {
             configuration.addAnnotatedClass(modelInstance.getClass());
             logger.info(String.format("Model registered: [%s].", name));
@@ -96,7 +99,7 @@ public class Hibernate {
      * Fetches values.
      */
     public <T> T fetch(Function<Session, T> closure) {
-        try (final Session session = sessionFactory.getCurrentSession()) {
+        try (final Session session = sessionFactory.openSession()) {
             return closure.apply(session);
         }
     }

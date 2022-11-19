@@ -52,8 +52,8 @@ public class HibernateRegistry {
     public final String currentSessionContextClass = "thread";
 
     @RegistryEntry(key = "Hibernate.ShowSql")
-    public final Boolean showSql = true;
+    public final Boolean showSql = false;
 
     @RegistryEntry(key = "Hibernate.FormatSql")
-    public final Boolean formatSql = true;
+    public final Boolean formatSql = false;
 }

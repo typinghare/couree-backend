@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication(exclude = {
         // By excluding this class, SpringBoot will not automatically load data source. Instead,
@@ -12,7 +13,7 @@ import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguratio
 
         // Excluding this class to enable "com.couree.backend.exception.md.resolver.HandlerExceptionResolver",
         // which is a custom exception.md resolver
-        WebMvcAutoConfiguration.class,
+//        WebMvcAutoConfiguration.class,
 })
 public class Application {
     public static void main(String[] args) {

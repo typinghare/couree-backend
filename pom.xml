@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- 4.0.0 is common; stick with this -->
     <modelVersion>4.0.0</modelVersion>
+
+    <!-- claims that this artifact is a SpringBoot artifact -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.7.4</version>
+        <relativePath/>
     </parent>
-    <groupId>couree.com</groupId>
+
+    <!-- Uid of group that owns project -->
+    <groupId>com.couree</groupId>
+
+    <!-- Name of final compilation -->
     <artifactId>luckycat</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>couree</name>
-    <description>couree</description>
+
+    <!-- Version of this artifact -->
+    <version>0.0.0</version>
+
+    <!-- .war, .jar, .ear, .etc -->
+    <packaging>war</packaging>
+
+    <!-- Information about this artifact; just labels -->
+    <name>couree-backend</name>
+    <description>The backend of Couree（Java 17)</description>
+
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -42,16 +58,16 @@
             <version>2.7.5</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <scope>runtime</scope>
-            <optional>true</optional>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-devtools</artifactId>-->
+<!--            <scope>runtime</scope>-->
+<!--            <optional>true</optional>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
+            <version>8.0.31</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -69,6 +85,19 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- RDBMS (Hibernate, C3P0) -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>6.1.5.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-c3p0</artifactId>
+            <version>6.1.5.Final</version>
+        </dependency>
+
+        <!-- NoSQL (Redis) -->
         <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
@@ -92,13 +121,14 @@
             <version>9.1.2</version>
         </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <id>spring-milestone</id>
-            <name>Spring Maven MILESTONE Repository</name>
-            <url>https://repo.spring.io/libs-milestone</url>
-        </repository>
-    </repositories>
+
+    <!--    <repositories>-->
+    <!--        <repository>-->
+    <!--            <id>spring-milestone</id>-->
+    <!--            <name>Spring Maven MILESTONE Repository</name>-->
+    <!--            <url>https://repo.spring.io/libs-milestone</url>-->
+    <!--        </repository>-->
+    <!--    </repositories>-->
 
     <build>
         <plugins>

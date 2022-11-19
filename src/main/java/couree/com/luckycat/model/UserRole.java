@@ -1,11 +1,13 @@
 package couree.com.luckycat.model;
 
 import couree.com.luckycat.core.base.Model;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "user_role")
+@Component
 public class UserRole extends Model {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

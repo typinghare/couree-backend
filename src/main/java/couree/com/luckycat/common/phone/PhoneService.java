@@ -3,7 +3,6 @@ package couree.com.luckycat.common.phone;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import couree.com.luckycat.core.annotation.Initializer;
-import couree.com.luckycat.core.annotation.InitializerContainer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Service;
  * @author James Chan
  */
 @Service
-@InitializerContainer
 public class PhoneService {
     private final PhoneServiceRegistry phoneServiceRegistry;
 

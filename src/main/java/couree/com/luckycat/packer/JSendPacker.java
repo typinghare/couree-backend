@@ -4,11 +4,18 @@ import com.google.gson.Gson;
 import couree.com.luckycat.constant.JSendStatus;
 import couree.com.luckycat.core.IntegratedRequest;
 import couree.com.luckycat.core.annotation.SuccessMessage;
+import couree.com.luckycat.core.exception.RequestException;
 import couree.com.luckycat.core.pack.Packer;
 import couree.com.luckycat.dto.JSendDto;
+import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * JSendPacker packs the given objects and exceptions complying with JSend policy.
@@ -42,52 +49,45 @@ public class JSendPacker extends Packer {
     }
 
     private Object packError(IntegratedRequest request) {
-        return null;
-    }
+        final JSendDto jSendDto = new JSendDto();
+        final Exception exception = request.getException();
 
-//    public Object packError(
-//            Throwable throwable,
-//            Method method,
-//            HttpServletRequest httpServletRequest,
-//            HttpServletResponse httpServletResponse
-//    ) {
-//        setResponseHeader(httpServletResponse);
-//
-//        JSendStatus status = JSendStatus.FAIL;
-//        String message = DEFAULT_ERROR_MESSAGE;
-//        String errorCode = DEFAULT_ERROR_CODE;
-//        Object data = null;
-//
-//        if (throwable instanceof RequestException requestException) {
-//            RequestExceptionManager requestExceptionManager = App.getBean(RequestExceptionManager.class);
-//            message = requestExceptionManager.getMessage(requestException);
-//            errorCode = requestExceptionManager.getErrorCode(requestException);
-//
-//            HttpStatus httpStatus = requestExceptionManager.getHttpStatus(requestException);
-//            httpServletResponse.setStatus(httpStatus.value());
-//        } else if (throwable instanceof MethodArgumentTypeMismatchException exception) {
-//            MethodParameter parameter = exception.getParameter();
-//            message = String.format(
-//                    "The type of parameter [%s] is incorrect. It should be: [%s].",
-//                    parameter.getParameterName(),
-//                    parameter.getParameterType().getSimpleName()
-//            );
-//
-//            Map<String, String> map = new HashMap<>();
-//            map.put(parameter.getParameterName(), parameter.getParameterType().getSimpleName());
-//            data = map;
-//        } else if (throwable instanceof MissingServletRequestParameterException exception) {
-//            message = String.format("Missing required parameter: [%s]", exception.getParameterName());
-//
-//            Map<String, String> map = new HashMap<>();
-//            map.put(exception.getParameterName(), exception.getParameterType());
-//            data = map;
-//        } else {
-//            status = JSendStatus.ERROR;
-//        }
-//
-//        return gson.toJson(new JSendDto(status, message, errorCode, data));
-//    }
+        jSendDto.setStatus(JSendStatus.FAIL);
+
+        if (exception instanceof final RequestException requestException) {
+            jSendDto.setMessage(requestException.getMessage());
+            jSendDto.setErrorCode(requestException.getErrorCode());
+            request.getHttpServletResponse().setStatus(requestException.getHttpStatus().value());
+        } else if (exception instanceof MethodArgumentTypeMismatchException methodArgumentTypeMismatchException) {
+            MethodParameter parameter = methodArgumentTypeMismatchException.getParameter();
+            final String message = String.format(
+                    "The type of parameter [%s] is incorrect. It should be: [%s].",
+                    parameter.getParameterName(),
+                    parameter.getParameterType().getSimpleName()
+            );
+            jSendDto.setMessage(message);
+
+            final Map<String, String> data = new HashMap<>();
+            data.put(parameter.getParameterName(), parameter.getParameterType().getSimpleName());
+            jSendDto.setData(data);
+
+            jSendDto.setErrorCode(DEFAULT_ERROR_CODE);
+        } else if (exception instanceof MissingServletRequestParameterException missingServletRequestParameterException) {
+            final String message = String.format(
+                    "The parameter [%s] is missing. Its type should be: [%s].",
+                    missingServletRequestParameterException.getParameterName(),
+                    missingServletRequestParameterException.getParameterType()
+            );
+            jSendDto.setMessage(message);
+            jSendDto.setErrorCode(DEFAULT_ERROR_CODE);
+            request.getHttpServletResponse().setStatus(HttpStatus.BAD_REQUEST.value());
+        } else {
+            jSendDto.setMessage(DEFAULT_ERROR_MESSAGE);
+            jSendDto.setErrorCode(DEFAULT_ERROR_CODE);
+        }
+
+        return gson.toJson(jSendDto);
+    }
 
     private void setResponseHeader(HttpServletResponse httpServletResponse) {
         httpServletResponse.setHeader("Content-Type", "application/json");

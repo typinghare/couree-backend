@@ -13,4 +13,9 @@ public class UserServiceTest {
     public void sendCode() {
         userService.signUpSendCodeToPhone("+1&6173863271");
     }
+
+    @Test
+    public void getService() {
+        System.out.println(1);
+    }
 }

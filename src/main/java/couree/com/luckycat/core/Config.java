@@ -1,7 +1,6 @@
 package couree.com.luckycat.core;
 
 import couree.com.luckycat.core.annotation.Initializer;
-import couree.com.luckycat.core.annotation.InitializerContainer;
 import couree.com.luckycat.core.annotation.RegistryEntries;
 import couree.com.luckycat.core.annotation.RegistryEntry;
 import couree.com.luckycat.core.common.Loads;
@@ -184,27 +183,32 @@ public class Config {
     }
 
     /**
-     * Actuate core.
+     * Actuates core. Runs initializers.
      */
     private void actuate() {
-        // actuate initializers
-        final Map<String, Object> initializerContainerMap = applicationContext.getBeansWithAnnotation(InitializerContainer.class);
-        for (final Object initializerContainer : initializerContainerMap.values()) {
+        final CoreBeanPostProcessor coreBeanPostProcessor = applicationContext.getBean(CoreBeanPostProcessor.class);
+
+        for (final Object initializerContainer : coreBeanPostProcessor.getInitializerContainerList()) {
+            final Class<?> initializerContainerClass = initializerContainer.getClass();
             try {
-                for (final Method method : initializerContainer.getClass().getDeclaredMethods()) {
+                for (final Method method : initializerContainerClass.getDeclaredMethods()) {
                     if (method.isAnnotationPresent(Initializer.class)) {
                         method.setAccessible(true);
                         method.invoke(initializerContainer);
                     }
                 }
             } catch (InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(String.format("Fail to actuate initializer in [%s].", initializerContainer.getClass()));
+                e.getCause().printStackTrace();
+                throw new RuntimeException(String.format(
+                        "Fail to actuate initializer in [%s].",
+                        initializerContainerClass
+                ));
             }
         }
     }
 
     /**
-     * Returns the  corresponding registry value of the given key.
+     * Returns the corresponding registry value of the given key.
      * @param key ket to find.
      * @return corresponding registry value of the given key
      */
@@ -218,6 +222,10 @@ public class Config {
         return value;
     }
 
+    /**
+     * Returns the startup phase.
+     * @return the startup phase.
+     */
     public StartupPhase getStartupPhase() {
         return startupPhase;
     }
