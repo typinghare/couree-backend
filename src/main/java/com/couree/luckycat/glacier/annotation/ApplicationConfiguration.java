@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 /**
- * Indicates an application.
+ * Indicates a glacier application.
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

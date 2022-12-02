@@ -23,6 +23,9 @@ public class ApplicationManager {
      */
     private final Map<String, Class<?>> applicationMap = new HashMap<>();
 
+    /**
+     * Applications that have been loaded.
+     */
     private final Set<String> loadedApplication = new HashSet<>();
 
     public ApplicationManager(ApplicationContext applicationContext, Registry registry) {
@@ -30,6 +33,11 @@ public class ApplicationManager {
         this.registry = registry;
     }
 
+    /**
+     * Register all applications.
+     * @param applicationName    name of the application
+     * @param configurationClass application configuration class
+     */
     private void register(String applicationName, Class<?> configurationClass) {
         if (configurationClass == null) {
             return;

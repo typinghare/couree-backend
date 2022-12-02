@@ -8,7 +8,7 @@ import com.couree.luckycat.constant.RedisKeyType;
 import com.couree.luckycat.dto.UserDto;
 import com.couree.luckycat.dto.UserSignUpDto;
 import com.couree.luckycat.exception.business.UserServiceException;
-import com.couree.luckycat.glacier.app.security.Encoder;
+import com.couree.luckycat.app.security.Encoder;
 import com.couree.luckycat.glacier.common.JBeans;
 import com.couree.luckycat.glacier.common.Throws;
 import com.couree.luckycat.glacier.common.Verifications;

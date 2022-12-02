@@ -1,6 +1,6 @@
 package com.couree.luckycat.dto;
 
-import com.couree.luckycat.glacier.app.responder.Dto;
+import com.couree.luckycat.app.responder.Dto;
 
 public class UserSignUpDto extends Dto {
     private String phoneNumber;

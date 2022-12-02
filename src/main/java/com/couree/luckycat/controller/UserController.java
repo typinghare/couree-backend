@@ -2,7 +2,7 @@ package com.couree.luckycat.controller;
 
 import com.couree.luckycat.dto.UserDto;
 import com.couree.luckycat.glacier.annotation.Controller;
-import com.couree.luckycat.glacier.app.responder.annotation.SuccessMessage;
+import com.couree.luckycat.app.responder.annotation.SuccessMessage;
 import com.couree.luckycat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

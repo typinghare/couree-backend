@@ -1,8 +1,8 @@
 package com.couree.luckycat.exception.business;
 
-import com.couree.luckycat.glacier.app.error.annotation.Entry;
-import com.couree.luckycat.glacier.app.error.annotation.ExceptionConfiguration;
-import com.couree.luckycat.glacier.app.error.stereo.BusinessLogicException;
+import com.couree.luckycat.app.error.annotation.Entry;
+import com.couree.luckycat.app.error.annotation.ExceptionConfiguration;
+import com.couree.luckycat.app.error.stereo.BusinessLogicException;
 import org.springframework.http.HttpStatus;
 
 @ExceptionConfiguration(exceptionCode = 10)

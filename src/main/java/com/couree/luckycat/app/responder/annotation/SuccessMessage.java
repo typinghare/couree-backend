@@ -1,4 +1,4 @@
-package com.couree.luckycat.glacier.annotation;
+package com.couree.luckycat.app.responder.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,10 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Indicates that a method will be run right after the framework finishes loading.
+ * Annotation that indicates the success message if the controller method runs successfully.
  * @author James Chan
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Initializer {
+public @interface SuccessMessage {
+    String value();
 }
